@@ -165,7 +165,7 @@
                         "[resourceId('Microsoft.Web/Sites', parameters('functionAppName'))]"
                     ],
                     "properties": {
-                        "RepoUrl": "https://github.com/Azure/KeyVault-Secrets-Rotation-CosmosDB-PowerShell.git",
+                        "RepoUrl": "https://github.com/Mohini204/KeyVault-Secrets-Rotation-CosmosDB-PowerShell.git",
                         "branch": "main",
                         "IsManualIntegration": true
                     }
@@ -252,7 +252,7 @@
                             "dependsOn": [],
                             "tags": {
                                 "ValidityPeriodDays":"[parameters('secretValidityPeriodDays')]",
-                                "CredentialId":"key1",
+                                "CredentialId":"primary",
                                 "ProviderAddress":"[variables('ProviderResourceId')]"
                             },
                             "properties": {
