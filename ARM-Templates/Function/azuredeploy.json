@@ -256,7 +256,7 @@
                                 "ProviderAddress":"[variables('ProviderResourceId')]"
                             },
                             "properties": {
-                                "value": "[listKeys(variables('ProviderResourceId'), '2020-04-01').primaryMasterKey]",
+                                "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('CosmosDBName')), '2019-12-12').connectionStrings[0].connectionString]",
                                 "attributes": {
                                     "exp": "[parameters('secretExpirationDateUnixTime')]"
                                 }
