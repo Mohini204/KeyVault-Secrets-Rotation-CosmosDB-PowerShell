@@ -57,7 +57,7 @@
         },
         "deploySecretWithCosmosDBKeyToKeyVault": {
             "defaultValue": "true",
-            "type": "bool",
+            "type": "String",
             "metadata": {
                 "description": "Add CosmosDB key to key vault. New secret is created with key as value"
             }
@@ -256,7 +256,7 @@
                                 "ProviderAddress":"[variables('ProviderResourceId')]"
                             },
                             "properties": {
-                                "value": "[listConnectionStrings(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('CosmosDBName')), '2019-12-12').connectionStrings[0].connectionString]",
+                                "value": "[listKeys(variables('ProviderResourceId'), '2020-04-01').primaryMasterKey]",
                                 "attributes": {
                                     "exp": "[parameters('secretExpirationDateUnixTime')]"
                                 }
