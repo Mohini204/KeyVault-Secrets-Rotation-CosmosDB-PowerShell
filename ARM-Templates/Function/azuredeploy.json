@@ -57,7 +57,7 @@
         },
         "deploySecretWithCosmosDBKeyToKeyVault": {
             "defaultValue": "true",
-            "type": "Bool",
+            "type": "bool",
             "metadata": {
                 "description": "Add CosmosDB key to key vault. New secret is created with key as value"
             }
