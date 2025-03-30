@@ -6,11 +6,11 @@ function RegenerateCredential($credentialId, $providerAddress){
     $cosmosDbAccountName = ($providerAddress -split '/')[8]
     $resourceGroupName = ($providerAddress -split '/')[4]
     
-    #Regenerate key
-    $keyType = $credentialId + "MasterKey"
+    #Regenerate read-only key
+    $keyType = $credentialId + "ReadonlyMasterKey"
 
     $operationResult = New-AzCosmosDBAccountKey -ResourceGroupName $resourceGroupName -Name $cosmosDbAccountName -KeyKind $credentialId.ToLower()
-    $dBKeys = Get-AzCosmosDBAccountKey -ResourceGroupName $resourceGroupName -Name $cosmosDbAccountName -Type "Keys"
+    $dBKeys = Get-AzCosmosDBAccountKey -ResourceGroupName $resourceGroupName -Name $cosmosDbAccountName -Type "ReadOnlyKeys"
 
     $newCredentialValue = $dBKeys.Item($keyType)
 
@@ -31,15 +31,15 @@ function GetAlternateCredentialId($credentialId){
     }
 }
 
-function AddSecretToKeyVault($keyVAultName,$secretName,$secretvalue,$exprityDate,$tags){
+function AddSecretToKeyVault($keyVaultName,$secretName,$secretvalue,$exprityDate,$tags){
     
-     Set-AzKeyVaultSecret -VaultName $keyVAultName -Name $secretName -SecretValue $secretvalue -Tag $tags -Expires $expiryDate
+     Set-AzKeyVaultSecret -VaultName $keyVaultName -Name $secretName -SecretValue $secretvalue -Tag $tags -Expires $expiryDate
 
 }
 
 function RoatateSecret($keyVaultName,$secretName,$secretVersion){
     #Retrieve Secret
-    $secret = (Get-AzKeyVaultSecret -VaultName $keyVAultName -Name $secretName)
+    $secret = (Get-AzKeyVaultSecret -VaultName $keyVaultName -Name $secretName)
     Write-Host "Secret Retrieved"
     
     If($secret.Version -ne $secretVersion){
@@ -74,7 +74,7 @@ function RoatateSecret($keyVaultName,$secretName,$secretVersion){
 
     $expiryDate = (Get-Date).AddDays([int]$validityPeriodDays).ToUniversalTime()
     $secretvalue = ConvertTo-SecureString "$newCredentialValue" -AsPlainText -Force
-    AddSecretToKeyVault $keyVAultName $secretName $secretvalue $expiryDate $newSecretVersionTags
+    AddSecretToKeyVault $keyVaultName $secretName $secretvalue $expiryDate $newSecretVersionTags
 
     Write-Host "New credential added to Key Vault. Secret Name: $secretName"
 }
@@ -86,12 +86,12 @@ $secretName = $eventGridEvent.subject
 $secretVersion = $eventGridEvent.data.Version
 $keyVaultName = $eventGridEvent.data.VaultName
 
-Write-Host "Key Vault Name: $keyVAultName"
+Write-Host "Key Vault Name: $keyVaultName"
 Write-Host "Secret Name: $secretName"
 Write-Host "Secret Version: $secretVersion"
 
 #Rotate secret
 Write-Host "Rotation started."
-RoatateSecret $keyVAultName $secretName $secretVersion
+RoatateSecret $keyVaultName $secretName $secretVersion
 Write-Host "Secret Rotated Successfully"
 
